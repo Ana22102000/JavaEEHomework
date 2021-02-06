@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Books form</title>
+</head>
+<body>
+    <h1>Add book</h1>
+    <br>
+    <form action="/form" method="post">
+        <p>Title</p>
+        <input type="text" placeholder="Title" name="title">
+        <p>ISBN</p>
+        <input type="text" placeholder="ISBN" name="isbn">
+        <p>Author's name</p>
+        <input type="text" placeholder="Name" name="authorSurname">
+        <p>Author's surname</p>
+        <input type="text" placeholder="Surname" name="authorName">
+        <br>
+        <br>
+        <!--<form action="" method="post">-->
+            <!--<input type="submit"></form>-->
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
