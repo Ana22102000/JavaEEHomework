@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Harry Potter",
+        "isbn":"978-0-2547-5721-6",
+        "authorSurname":"Rowling",
+        "authorName":"Joanne"
+    },
+    {
+            "title": "Lord of the rings",
+            "isbn":"894-3-9825-2425-1",
+            "authorSurname":"Tolkien",
+            "authorName":"John"
+    },
+    {
+            "title": "Sherlock Holmes",
+            "isbn":"998-9-3766-9117-4",
+            "authorSurname":"Conan Doyle",
+            "authorName":"Arthur"
+    }
+]
