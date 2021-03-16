@@ -9,13 +9,12 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class DemoApplication {
 
-    DemoApplication(BookService bookService) {
-        this.bookService = bookService;
-    }
-    static BookService bookService;
+
+    private static BookService bookService;
 
 	public static void main(String[] args) {
         ApplicationContext applicationContext = SpringApplication.run(DemoApplication.class, args);
+        bookService = applicationContext.getBean(BookService.class);
         initDatabase();
 	}
 

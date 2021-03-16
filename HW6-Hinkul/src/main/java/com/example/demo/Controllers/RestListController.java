@@ -3,6 +3,7 @@ package com.example.demo.Controllers;
 import com.example.demo.BookModel;
 import com.example.demo.Database.BookEntity;
 import com.example.demo.Database.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,10 +12,7 @@ import java.util.List;
 @RestController
 public class RestListController {
 
-    RestListController(BookService bookService) {
-        this.bookService = bookService;
-    }
-
+   @Autowired
     private BookService bookService;
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
