@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Books list</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+<style>
+
+    .first_p, h1{
+        margin-left: 30px;
+    }
+    p{
+        margin-left: 3px;
+        display: inline-block;
+
+    }
+
+    h1{
+        margin-top: 30px;
+    }
+    button{
+        margin-left: 30px;
+    }
+
+
+</style>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+
+    <h1 th:text="${title}"></h1>
+    <br>
+    <p class="first_p">By</p><p th:text="${author_surname}"></p><p th:text="${author_name}"></p>
+
+    <div th:if="${#authorization.expression('hasAuthority(''VIEW_SELECTED'')')}">
+        <button id="add_select">Add to selected books</button>
+    </div>
+
+<script>
+    $(function() {
+
+        $('#add_select').click(function () {
+            var $isbn = window.location.pathname.split("/").pop();
+            console.log($isbn);
+
+            $.ajax({
+                type: 'POST',
+                url: '/add_to_selected',
+                dataType: 'json',
+                data: JSON.stringify({
+                    isbn: $isbn
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                },
+                success: function (response) {
+                    alert("Book was added");
+                }
+            });
+
+        });
+
+
+
+    });
+</script>
+
+</body>
+</html>

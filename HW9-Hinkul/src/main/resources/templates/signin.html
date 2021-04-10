@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <title>Sign in</title>
+</head>
+<body>
+<h3>Sign in form</h3>
+<form id="signInForm">
+    <input name="login" placeholder="Login">
+    <input name="password" type="password" placeholder="Password">
+    <button type="submit">Sign in</button>
+</form>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    $(function(){
+        $('#signInForm').submit(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/my-sign-in',
+                dataType: 'json',
+                data: JSON.stringify({
+                    login: $(this).find('[name=login]').val(),
+                    password: $(this).find('[name=password]').val()
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                },
+                success: function (response) {
+                    console.log(response);
+                    if(response)
+                        window.location.href = "http://localhost:8080/login";
+                    else
+                        alert("This login already exists, please try again");
+
+
+                },
+                error: function(xhr) {
+                    alert(JSON.stringify(xhr.responseJSON, null, 4));
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

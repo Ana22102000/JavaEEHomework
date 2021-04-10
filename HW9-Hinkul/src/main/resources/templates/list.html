@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Books list</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+<style>
+    .col1, .col2{
+        float: left;
+    }
+    .col1{
+        width: 30%;
+    }
+    .col2{
+        width: 70%;
+    }
+    p, input, button, h1{
+        margin-left: 30px;
+    }
+    .search_input{
+        display: inline-block;
+    }
+
+    h1{
+        margin-top: 30px;
+    }
+    button{
+        margin-bottom: 30px;
+    }
+
+
+    @media screen and (max-width: 750px) {
+        .col1, .col2 {
+            width: 100%;
+        }
+    }
+
+</style>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+
+<div class="col1">
+    <br>
+    <button id="sign_in">Sign in</button>
+    <button id="log_in">Log in</button>
+    <button id="log_out">Log out</button>
+    <br>
+
+    <div th:if="${#authorization.expression('hasAuthority(''VIEW_SELECTED'')')}">
+           <button id="selected">View selected books</button>
+    </div>
+
+    <h1>Add book</h1>
+    <br>
+    <form id="add_book_form">
+        <p>Title</p>
+        <input type="text" placeholder="Title" name="title">
+        <p>ISBN</p>
+        <input type="text" placeholder="ISBN" name="isbn">
+        <p>Author's name</p>
+        <input type="text" placeholder="Name" name="authorSurname">
+        <p>Author's surname</p>
+        <input type="text" placeholder="Surname" name="authorName">
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div class="col2">
+    <h1>Search</h1>
+    <input class="search_input" type="text" placeholder="Title" name="title" id="title">
+    <input class="search_input" type="text" placeholder="Author's surname" name="author_surname" id="author_surname">
+    <input class="search_input" type="text" placeholder="Author's name" name="author_name" id="author_name">
+    <input class="search_input" type="text" placeholder="Isbn" name="isbn_search" id="isbn">
+    <br>
+    <br>
+    <button id = "search_title_button">Search</button>
+
+
+    <table class="table table-hover table-bordered">
+        <thead>
+        <th>NAME</th>
+        <th>ISBN</th>
+        <th>Author's surname</th>
+        <th>Author's name</th>
+        </thead>
+        <tbody id="books_table_body">
+        <tr class = "table_row" th:each="book: ${books}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.isbn}"></td>
+            <td th:text="${book.author.authorSurname}"></td>
+            <td th:text="${book.author.authorName}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+    function formTableRow(book){
+        return '<tr class = "table_row"><td>' + book.title + '</td><td>' + book.isbn + '</td><td>' + book.author.authorSurname + '</td><td>' + book.author.authorName + '</td></tr>';
+    }
+
+    function getAllBooks($title, $isbn, $surname, $name, $books){
+        $.ajax({
+            type: 'GET',
+            url: '/get_books',
+
+            dataType: 'json',
+            data: 'title='+$title+'&isbn='+$isbn+'&author_surname='+$surname+'&author_name='+$name,
+            contentType: 'application/json',
+
+            success: function (response) {
+                response.forEach(function (book) {
+                    $books.append(formTableRow(book));
+                });
+
+            }
+        });
+    }
+
+
+    $(function() {
+
+        $('#add_book_form').submit(function(e){
+                e.preventDefault();
+
+
+            var $books = $('#books_table_body');
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/form',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        title: $(this).find('[name=title]').val(),
+                        isbn: $(this).find('[name=isbn]').val(),
+                        authorSurname: $(this).find('[name=authorSurname]').val(),
+                        authorName: $(this).find('[name=authorName]').val()
+                    }),
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Content-Type', 'application/json')
+                    },
+                    success: function (response) {
+                        $books.empty();
+                        $('input').val('');
+                        getAllBooks("", "", "", "", $books);
+                    },
+                    error: function (xhr) {
+                        alert(JSON.stringify(xhr.responseJSON, null, 4));
+                        //$('#response').text('ERRORS:\n' + JSON.stringify(xhr.responseJSON, null, 4));
+                    }
+                });
+            });
+
+
+        $('#search_title_button').click(function () {
+            var $books = $('#books_table_body');
+
+            $books.empty();
+            var $title = $('#title').val();
+            var $isbn = $('#isbn').val();
+            var $surname = $('#author_surname').val();
+            var $name = $('#author_name').val();
+            getAllBooks($title, $isbn, $surname, $name, $books);
+        });
+
+        $('.table_row').click(function () {
+            var $isbn = this.childNodes[3].innerText;
+            console.log($isbn);
+
+            var url= "/book/"+$isbn;
+            window.location = url;
+        });
+
+        $('#log_in').click(function () {
+            window.location.href = "http://localhost:8080/login";
+        });
+        $('#log_out').click(function () {
+            //logout
+
+                $('#logoutResponse').text('');
+
+                $.ajax({
+                    url: '/logout',
+                    success: function (response) {
+                        window.location.href = "http://localhost:8080/list";
+                        alert("Logout was successfull");
+                    },
+                    error: function(xhr) {
+                        alert("Error, please try again");
+                    }
+                });
+
+        });
+        $('#sign_in').click(function () {
+            window.location.href = "http://localhost:8080/sign_in";
+        });
+        $('#selected').click(function () {
+            window.location.href = "http://localhost:8080/selected";
+        });
+
+    });
+</script>
+
+
+</body>
+</html>
