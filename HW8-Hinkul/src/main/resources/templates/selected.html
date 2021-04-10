@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Books list</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+<style>
+    .col2{
+        float: left;
+        width: 90%;
+        margin-left: 5%;
+    }
+
+    p, input, button, h1{
+        margin-left: 30px;
+    }
+
+    h1{
+        margin-top: 30px;
+    }
+    button{
+        margin-bottom: 30px;
+    }
+
+
+</style>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+
+
+<div class="col2">
+
+    <table id="selected_table" class="table table-hover table-bordered">
+        <thead>
+        <th>NAME</th>
+        <th>ISBN</th>
+        <th>Author's surname</th>
+        <th>Author's name</th>
+        <th>Delete from selected</th>
+        </thead>
+        <tbody id="books_table_body">
+        <tr class = "table_row" th:each="book: ${books}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.isbn}"></td>
+            <td th:text="${book.author.authorSurname}"></td>
+            <td th:text="${book.author.authorName}"></td>
+            <td> <button class="delete_button">Delete</button></td>
+
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+
+
+
+    $(function() {
+
+
+        $('.delete_button').click(function () {
+            var $row = this.parentElement.parentElement;
+            var $isbn = $row.childNodes[3].innerText;
+            console.log($isbn);
+            var $row_index = $row.rowIndex;
+
+            $.ajax({
+                type: 'POST',
+                url: '/delete_selected',
+                dataType: 'json',
+                data: JSON.stringify({
+                    isbn: $isbn
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                },
+                success: function (response) {
+                    document.getElementById("selected_table").deleteRow($row_index);
+                }
+            });
+
+        });
+
+
+
+
+    });
+</script>
+
+
+</body>
+</html>

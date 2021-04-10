@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Books list</title>
@@ -43,6 +43,16 @@
 
 
 <div class="col1">
+    <br>
+    <button id="sign_in">Sign in</button>
+    <button id="log_in">Log in</button>
+    <button id="log_out">Log out</button>
+    <br>
+
+    <div th:if="${#authorization.expression('hasAuthority(''VIEW_SELECTED'')')}">
+           <button id="selected">View selected books</button>
+    </div>
+
     <h1>Add book</h1>
     <br>
     <form id="add_book_form">
@@ -161,6 +171,33 @@
 
             var url= "/book/"+$isbn;
             window.location = url;
+        });
+
+        $('#log_in').click(function () {
+            window.location.href = "http://localhost:8080/login";
+        });
+        $('#log_out').click(function () {
+            //logout
+
+                $('#logoutResponse').text('');
+
+                $.ajax({
+                    url: '/logout',
+                    success: function (response) {
+                        window.location.href = "http://localhost:8080/list";
+                        alert("Logout was successfull");
+                    },
+                    error: function(xhr) {
+                        alert("Error, please try again");
+                    }
+                });
+
+        });
+        $('#sign_in').click(function () {
+            window.location.href = "http://localhost:8080/sign_in";
+        });
+        $('#selected').click(function () {
+            window.location.href = "http://localhost:8080/selected";
         });
 
     });

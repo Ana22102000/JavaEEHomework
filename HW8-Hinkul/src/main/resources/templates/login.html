@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <title>Login</title>
+</head>
+<body>
+<h3>Login form</h3>
+<form id="loginForm">
+    <input name="login" placeholder="Login">
+    <input name="password" type="password" placeholder="Password">
+    <button type="submit">Log in</button>
+</form>
+
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    $(function(){
+        $('#loginForm').submit(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                type: 'POST',
+                url: '/my-login',
+                dataType: 'json',
+                data: JSON.stringify({
+                    login: $(this).find('[name=login]').val(),
+                    password: $(this).find('[name=password]').val()
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json')
+                },
+                success: function (response) {
+
+                    window.location.href = "http://localhost:8080/list";
+                    // $('#loginResponse').text(JSON.stringify(response, null, 4));
+                },
+                error: function(xhr) {
+                    alert("Wrong login or password, please try again");
+                    // text(JSON.stringify(xhr.responseJSON, null, 4));
+                }
+            });
+        });
+
+    });
+</script>
+</body>
+</html>

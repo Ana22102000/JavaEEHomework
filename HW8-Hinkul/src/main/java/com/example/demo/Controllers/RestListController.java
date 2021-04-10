@@ -31,8 +31,8 @@ public class RestListController {
         newBook.setIsbn(bookModel.getIsbn());
         newBook.setAuthorId(newAuthor.getId());
         newBook = bookRepository.save(newBook);
-        System.out.println(newBook);
-        System.out.println(newAuthor);
+//        System.out.println(newBook);
+//        System.out.println(newAuthor);
         return ResponseEntity.ok(bookModel);
     }
 
